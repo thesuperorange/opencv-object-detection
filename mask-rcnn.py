@@ -132,7 +132,8 @@ if __name__ == '__main__':
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
     ap.add_argument("-d", "--dataset", required=True, help="input image dataset")
-
+    ap.add_argument("-i", "--input_path", required=True, help="input image folder")
+    
     # ap.add_argument("-m", "--mask-rcnn", required=True,
     # 	help="base path to mask-rcnn directory")i
     ap.add_argument('-v', '--visualize', action='store_true',help="whether or not we are going to visualize each instance")
@@ -171,13 +172,13 @@ if __name__ == '__main__':
     #img_path ='C:/Users/superorange/Videos/MI3_dataset/Pathway2_3/ORIG/ch4/00151.png'
     #img_path='images/example_02.jpg'
 
-    MI3path = '/home/waue0920/MI3'
+    MI3path = args['input_path']
     method='mask-rcnn'
 #    dataset = 'Pathway1_1'
     fo = open(method+'_'+dataset+ ".txt", "w")
     channel_list = [2,4,6]
     for channel in channel_list:
-        input_folder = os.path.join(MI3path,dataset,"ORIG","ch"+str(channel))
+        input_folder = os.path.join(MI3path,dataset,"ch"+str(channel))
         for filename in os.listdir(input_folder):
             print(filename)
             detect(dataset, input_folder, filename, channel,vis,log)

@@ -5,6 +5,6 @@ if __name__ == '__main__':
         ,'Staircase_1','Staircase_2','Staircase_3','Staircase_4','Bus_2','Bus_3']
     for dt in dataset_list:
         print(dt)
-        os.system("python SSD.py -d "+dt+" -l")
+        os.system("python SSD.py -i /work/superorange5/MI3 -d "+dt+" -l")
 
 
