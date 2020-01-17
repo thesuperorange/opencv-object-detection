@@ -115,7 +115,10 @@ if __name__ == '__main__':
     # net = cv2.dnn.readNetFromDarknet(modelConfiguration, modelBinary);
     method = 'SSD'
     #    dataset = 'Pathway1_1'
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
     fo = open(output_folder + '/' + method + '_' + dataset + ".txt", "w")
+
     channel_list = [2, 4, 6]
     for channel in channel_list:
         input_folder = os.path.join(MI3path, dataset, "ch" + str(channel))
