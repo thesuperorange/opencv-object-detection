@@ -85,7 +85,7 @@ if __name__ == '__main__':
     vis = args['visualize']
     log = args['savelog']
     MI3path = args['input_path']
-    output_folder = args['output_folder']
+    output_folder = 'output/'+args['output_folder']
 
     class_label_path = 'labels'
     label_dataset = 'coco'
