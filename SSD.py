@@ -122,7 +122,7 @@ if __name__ == '__main__':
     channel_list = [2, 4, 6]
     for channel in channel_list:
         input_folder = os.path.join(MI3path, dataset, "ch" + str(channel))
-        output_result_folder = os.path.join(output_folder, method + '_ch' + channel + '_' + dataset)
+        output_result_folder = os.path.join(output_folder, method + '_ch' + str(channel) + '_' + dataset)
         output_img_folder = os.path.join(output_folder, 'output_images', dataset + '_ch' + channel)
         if not os.path.exists(output_img_folder):
             os.makedirs(output_img_folder)
