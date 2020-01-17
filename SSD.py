@@ -40,7 +40,7 @@ def detect(dataset, foldername, filename, ch, mode_img, bbox_log, output_result_
             # display the prediction
             label = "{}: {:.2f}%".format(LABELS[idx], confidence * 100)
             # print("[INFO] {}".format(label))
-
+            class_name = LABELS[idx].strip().replace(" ", "_")
             if mode_img:
                 cv2.rectangle(image, (startX, startY), (endX, endY), COLORS[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
@@ -52,9 +52,9 @@ def detect(dataset, foldername, filename, ch, mode_img, bbox_log, output_result_
             if bbox_log:
                 fo.write(
                     str(ch) + "," + image_num + "," + str(startX) + "," + str(startY) + "," +
-                    str(endX) + "," + str(endY) + "," + str(confidence) + "," + LABELS[idx] + "\n"
+                    str(endX) + "," + str(endY) + "," + str(confidence) + "," + class_name + "\n"
                 )
-                fo2.write(LABELS[idx] + ' ' + str(confidence) + ' ' + str(startX) + ' ' + str(startY) + ' ' + str(
+                fo2.write(class_name + ' ' + str(confidence) + ' ' + str(startX) + ' ' + str(startY) + ' ' + str(
                     endX) + ' ' + str(endY))
 
     if mode_img:
