@@ -11,11 +11,11 @@ import os
 confidence_threshold = 0.3  # args["threshold"]
 nms_threshold = 0.5
 param_visualize = 0
-
+METHOD='yolo'
 
 def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
     image_num = os.path.splitext(filename)[0]
-    output_folder = 'output/' + dataset + "_ch" + str(ch)
+    output_folder = 'output/' +METHOD+'_'+ dataset + "_ch" + str(ch)
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
 
@@ -103,7 +103,6 @@ def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
                         0.5, color, 2)
 
     # show the output image
-
     if mode_img:
         output_name = output_folder + "/" + filename
         print(output_name)
@@ -123,10 +122,13 @@ if __name__ == '__main__':
     dataset = args['dataset']
     vis = args['visualize']
     log = args['savelog']
-
+    MI3path = args['input_path']
+    class_label_path = 'labels'
+    label_dataset = 'coco'
+    print('args: dataset={} input_path={} vis={} log={}'.format(dataset,MI3path,vis,log))
     # load the COCO class labels our YOLO model was trained on
     yolo_path = "yolo-model"
-    labelsPath = os.path.sep.join([yolo_path, "coco.names"])
+    labelsPath = os.path.sep.join([class_label_path, label_dataset+".names"])
     LABELS = open(labelsPath).read().strip().split("\n")
 
     # initialize a list of colors to represent each possible class label
@@ -141,7 +143,6 @@ if __name__ == '__main__':
     # load our YOLO object detector trained on COCO dataset (80 classes)
     print("[INFO] loading YOLO from disk...")
     net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
-    MI3path = args['input_path']
     method = 'yolo'
     #    dataset = 'Pathway1_1'
     fo = open(method + '_' + dataset + ".txt", "w")
@@ -150,6 +151,6 @@ if __name__ == '__main__':
     for channel in channel_list:
         input_folder = os.path.join(MI3path, dataset, "ch" + str(channel))
         for filename in os.listdir(input_folder):
-            detect(dataset, input_folder, filename, channel, False, True)
+            detect(dataset, input_folder, filename, channel, vis,log)
     # detect(input_folder, filename,output_folder='output/'+dataset+'ch'+channel)
     fo.close()

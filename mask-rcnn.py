@@ -13,11 +13,11 @@ import os
 param_threshold = 0.3 #args["threshold"]
 param_confidence = 0
 param_visualize = 0
-
+METHOD='mask-rcnn'
 
 def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
     image_num = os.path.splitext(filename)[0]
-    output_folder = os.path.join('output', dataset ,"ch" + str(ch))
+    output_folder = os.path.join('output', METHOD+'_'+dataset+ "_ch" + str(ch))
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
@@ -146,19 +146,21 @@ if __name__ == '__main__':
     dataset = args['dataset']
     vis = args['visualize']
     log =args['savelog']
+    class_label_path = 'labels'
+    label_dataset = 'coco'
 
     param_mask_rcnn="mask-rcnn-coco"
 
   # load the COCO class labels our Mask R-CNN was trained on
-    labelsPath = os.path.sep.join([param_mask_rcnn,"object_detection_classes_coco.txt"])
+    labelsPath = os.path.sep.join([class_label_path,label_dataset+'.name'])
     LABELS = open(labelsPath).read().strip().split("\n")
 
     # load the set of colors that will be used when visualizing a given
     # instance segmentation
-#    colorsPath = os.path.sep.join([param_mask_rcnn, "colors.txt"])
-#    COLORS = open(colorsPath).read().strip().split("\n")
-#    COLORS = [np.array(c.split(",")).astype("int") for c in COLORS]
-#    COLORS = np.array(COLORS, dtype="uint8")
+    colorsPath = os.path.sep.join([param_mask_rcnn, "colors.txt"])
+    COLORS = open(colorsPath).read().strip().split("\n")
+    COLORS = [np.array(c.split(",")).astype("int") for c in COLORS]
+    COLORS = np.array(COLORS, dtype="uint8")
 
     # derive the paths to the Mask R-CNN weights and model configuration
     weightsPath = os.path.sep.join([param_mask_rcnn,"frozen_inference_graph.pb"])

@@ -10,11 +10,13 @@ import os
 import time
 
 CONFIDENCE_TH = 0.3
+METHOD='SSD'
 
-
-def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
+def detect(dataset, foldername, filename, ch, mode_img, bbox_log,output_result_folder,output_img_folder):
 
 	image_num = os.path.splitext(filename)[0]
+        fo2 = open(output_result_folder+'/'+dataset+'_'+image_number + ".txt", "w")
+ 
 
 
 	#print(foldername+"/"+filename)
@@ -54,19 +56,20 @@ def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
 					str(ch)+","+image_num+","+str(startX)+"," + str(startY)+"," +
 					str(endX)+"," + str(endY)+","+str(confidence)+","+CLASSES[idx]+"\n"
 				)
+                                fo2.write(CLASSES[idx]+' '+str(confidence)+' '+str(startX)+' '+str(startY)+' ' +str(endX)+' '+str(endY))
 
 
 	if mode_img:
 		# show the output image
 		# cv2.imshow("Output", image)
-		output_folder = dataset+"_"+ch
-		if not os.path.exists(output_folder):
-			os.mkdir(output_folder)
-		output_name = output_folder+"/"+filename
+#		output_folder = 'output/'+METHOD+'_'+dataset+"_ch"+str(ch)
+#		if not os.path.exists(output_folder):
+#			os.mkdir(output_folder)
+		output_name = output_img_folder+"/"+filename
 		print(output_name)
 		cv2.imwrite(output_name, image)
 		# cv2.waitKey(0)
-
+        fo2.close()
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
@@ -75,15 +78,22 @@ if __name__ == '__main__':
  
     ap.add_argument('-v', '--visualize', action='store_true',help="whether or not we are going to visualize each instance")
     ap.add_argument('-l', '--savelog', action='store_true',help="whether or not print results in a file")	
+    ap.add_argument('-o','--output_folder',required=True,help="output results folder")
 
     args = vars(ap.parse_args())
     dataset = args['dataset']
     vis = args['visualize']
     log =args['savelog']
     MI3path = args['input_path']
+    output_folder = args['output_folder']
 
-
-    prototxt = "SSD_model/MobileNetSSD_deploy.prototxt.txt"
+    class_label_path = 'labels'
+    label_dataset = 'coco'
+#    prototxt = 'SSD_model/ssd_mobilenet_v1_coco_2017_11_17.pbtxt'
+#    prototxt = 'SSD_model/ssd_mobilenet_v2_coco_2018_03_29/saved_model/saved_model.pb'
+    prototxt = 'SSD_model/ssd_mobilenet_v2_coco_2018_03_29.pbtxt'
+#    prototxt = "SSD_model/ssd_inception_v2_coco_2017_11_17.pbtxt"
+#    prototxt = "SSD_model/MobileNetSSD_deploy.prototxt.txt"
     model = "SSD_model/MobileNetSSD_deploy.caffemodel"
 
 	# modelConfiguration = "yolov3-tiny.cfg"
@@ -91,24 +101,33 @@ if __name__ == '__main__':
 
 	# initialize the list of class labels MobileNet SSD was trained to
 	# detect, then generate a set of bounding box colors for each class
+    labelsPath = os.path.sep.join([class_label_path, label_dataset+".names"])
+    LABELS = open(labelsPath).read().strip().split("\n")
 
-    CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-				"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-				"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-				"sofa", "train", "tvmonitor"]
-    COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
+    COLORS = np.random.uniform(0, 255, size=(len(LABELS), 3))
+ 
 	# load our serialized model from disk
     print("[INFO] loading model...")
-    net = cv2.dnn.readNetFromCaffe(prototxt, model)
+
+#    net = cv2.dnn.readNetFromCaffe(prototxt, model)
+    weightsPath = 'SSD_model/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb'
+    net = cv2.dnn.readNetFromTensorflow(weightsPath,prototxt)
 	# net = cv2.dnn.readNetFromDarknet(modelConfiguration, modelBinary);
     method='SSD'
 #    dataset = 'Pathway1_1'
-    fo = open(method+'_'+dataset+ ".txt", "w")
+    fo = open(output_folder+'/'+method+'_'+dataset+ ".txt", "w")
     channel_list = [2,4,6]
     for channel in channel_list:
         input_folder = os.path.join(MI3path , dataset ,"ch" + str(channel))
-        for filename in os.listdir(input_folder):
-            detect(dataset, input_folder, filename, channel,vis,log)
+        output_result_folder =os.path.join(output_folder,method+'_ch'+channel+'_'+dataset) 
+        output_img_folder = os.path.join(output_folder,'output_images',dataset+'_ch'+channel)
+        if not os.path.exists(output_img_folder):
+            os.makedirs(output_img_folder)
+        if not os.path.exists(output_result_folder):
+            os.makedirs(output_result_folder)
+
+       for filename in os.listdir(input_folder):
+            detect(dataset, input_folder, filename, channel,vis,log,output_result_folder,output_img_folder)
     fo.close()
 

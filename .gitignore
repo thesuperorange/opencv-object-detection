@@ -2,7 +2,9 @@
 mask-rcnn-coco/
 yolo-model/
 SSD_model/
-
+*.txt
+output/
+labels/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
