@@ -47,7 +47,7 @@ def detect(dataset, foldername, filename, ch, mode_img, bbox_log):
         # (i.e., probability) associated with the prediction
         classID = int(boxes[0, 0, i, 1])
         confidence = boxes[0, 0, i, 2]
-
+        print(LABELS[classID])
         # filter out weak predictions by ensuring the detected probability
         # is greater than the minimum probability
         if confidence > param_confidence:
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     param_mask_rcnn="mask-rcnn-coco"
 
   # load the COCO class labels our Mask R-CNN was trained on
-    labelsPath = os.path.sep.join([class_label_path,label_dataset+'.name'])
+    labelsPath = os.path.sep.join([class_label_path,label_dataset+'.names'])
     LABELS = open(labelsPath).read().strip().split("\n")
 
     # load the set of colors that will be used when visualizing a given
